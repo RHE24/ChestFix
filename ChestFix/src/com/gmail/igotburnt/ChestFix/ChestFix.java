@@ -79,6 +79,7 @@ public class ChestFix extends JavaPlugin {
 		return this.hawkEye;
 	}
 	public void loadRightClick(){
+		this.rightClickOnly.clear();
 		this.rightClickOnly.add(Material.ENCHANTMENT_TABLE);
 		this.rightClickOnly.add(Material.WORKBENCH);
 		this.rightClickOnly.add(Material.CHEST);
