@@ -15,35 +15,47 @@ import uk.co.oliwali.HawkEye.HawkEye;
 
 public class ChestFix extends JavaPlugin {
 	public Logger log;
-	private ContainerListener containerListener = new ContainerListener(this);
-	private HashSet<Byte> transparent = new HashSet<Byte>(55);
-	private HashSet<Material> interact = new HashSet<Material>(30);
-	private HashSet<Material> rightClickOnly = new HashSet<Material>(30);
+	//Hawkeye
 	private HawkEye hawkEye =  null;
-	private YamlConfiguration config;
+	
+	//Config
 	private File configFile;
+	private YamlConfiguration config;
 	private boolean lenient = false;
 	
+	//Blocks
+	private HashSet<Material> transparent = new HashSet<Material>(55);
+	private HashSet<Material> interact = new HashSet<Material>(30);
+	private HashSet<Material> rightClickOnly = new HashSet<Material>(30);
+
+	//Listener
+	private ContainerListener containerListener = new ContainerListener(this);
+	
 	public void onEnable(){
-		Bukkit.getServer().getPluginManager().registerEvents(containerListener, this);
 		this.log = this.getLogger();
+		
+		Bukkit.getServer().getPluginManager().registerEvents(containerListener, this);
+		
 		log.info(this.getDescription().getName() +  this.getDescription().getVersion() + " Enabled ");
+		
+		/* Loading Config */
 		this.configFile = new File(this.getDataFolder(), "config.yml");
 		log.info("Loading Config");
+		
 		if(this.configFile == null){
+			/* First run */
 			log.info("Creating config");
 			this.getConfig().options().copyDefaults(true);
 			this.saveConfig();
 		}
 		
-		/* Loading Config File */
 		this.config = YamlConfiguration.loadConfiguration(this.configFile);
-		
-		this.lenient = config.getBoolean("lenient", true);
+		this.lenient = config.getBoolean("lenient");
 		
 		if(config.getBoolean("hawkeye")){
 			this.hawkEye = (HawkEye) Bukkit.getPluginManager().getPlugin("HawkEye");
 		}
+		/* Begin loading blocks */
 		log.info("Loading Transparent Blocks...");
 		loadTransparentBlocks();
 		log.info("Loading Interactable Blocks...");
@@ -59,7 +71,7 @@ public class ChestFix extends JavaPlugin {
 		return this.lenient;
 	}
 
-	public HashSet<Byte> getTransparentBlocks(){
+	public HashSet<Material> getTransparentBlocks(){
 		return this.transparent;
 	}
 	
@@ -164,7 +176,7 @@ public class ChestFix extends JavaPlugin {
 		
 		List<Integer> confIds = config.getIntegerList("transparent");
 		for(int i = 0; i < confIds.size(); i++){
-			this.addTransparentBlock(confIds.get(i));
+			this.addTransparentBlock(Material.getMaterial(confIds.get(i)));
 		}
 	}
 	
@@ -183,11 +195,7 @@ public class ChestFix extends JavaPlugin {
 		}
 	}
 	public void addTransparentBlock(Material mat){
-		addTransparentBlock(mat.getId());
-	}
-	public void addTransparentBlock(int id){
-		Byte byteid = (byte) id;
-		this.transparent.add(byteid);
+		this.transparent.add(mat);
 	}
 	public void addInteractBlock(Material mat){
 		this.getInteractBlocks().add(mat);

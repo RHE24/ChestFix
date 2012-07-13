@@ -1,7 +1,6 @@
 package com.gmail.igotburnt.ChestFix;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -30,40 +29,54 @@ public class ContainerListener implements Listener{
 		if(e.isCancelled() || (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.LEFT_CLICK_BLOCK)) return;
 		Block b = e.getClickedBlock();
 		
+		//If the block they used was a container E.g. chest, and they left clicked it, it doesn't matter
+		//So return.
+		if(e.getAction() == Action.LEFT_CLICK_BLOCK && plugin.getRightClickOnly().contains(b.getType())){
+			return;
+		}
 		
 		if(plugin.getInteractBlocks().contains(b.getType())){
 			Player p = e.getPlayer();
-			
-			//If the block they used was a container E.g. chest, and they left clicked it, it doesn't matter
-			//So return.
-			if(e.getAction() == Action.LEFT_CLICK_BLOCK && plugin.getRightClickOnly().contains(b.getType())){
-				return;
-			}
-			
 			//Get all blocks in 5m.
 			//Foreach block, if block == b, return;
 			//				 if NotTransparent, cancel event, return
 			//				 if block == farthest seen, cancel event, return
-					
-			List<Block> seen = new ArrayList<Block>(500);
 			
+			//Stores all blocks (Nearly) seen.  Used for leniency.
+			HashSet<Block> nearly = new HashSet<Block>(30);
+			
+			Block c = null;
 			BlockIterator bIt = new BlockIterator((LivingEntity) p, 5);
 			while(bIt.hasNext()){
-				seen.add(bIt.next());
-			} 
-			
-			for(Block c : seen){
+				c = bIt.next();
 				if(c.equals(b)){
-					//This is the block they're looking at.
-					return;
+					return; //Success
 				}
-				
-				if(!plugin.getTransparentBlocks().contains((byte) c.getTypeId())){
-					//The block is not transparent
-					if(b.getState() instanceof Chest && getChestNextTo(b) == c){		
-						return; //The block they're looking at is the chest next to the block they used. AKA, they have access anyway. (Double Chest case)
+				if(plugin.getTransparentBlocks().contains(c.getType())){
+					if(plugin.isLenient()){
+						/*
+						 * 		L
+						 * 	  L B L 
+						 * 		L
+						 * Where B = Main block
+						 * 		 L = Lenient block.
+						 * (Add a block above, below, left, right, behind, infront)
+						 */
+						nearly.add(c.getRelative(1, 0, 0));
+						nearly.add(c.getRelative(-1, 0, 0));
+						nearly.add(c.getRelative(0, 1, 0));
+						nearly.add(c.getRelative(0, -1, 0));
+						nearly.add(c.getRelative(0, 0, 1));
+						nearly.add(c.getRelative(0, 0, -1));
 					}
-					
+					continue;
+				}
+				else{
+					//Double chests
+					if(b.getState() instanceof Chest && getChestNextTo(b) == c){		
+						return;
+					}
+					//Open doors
 					if(c.getState().getData() instanceof Door){
 						Door d = (Door) c.getState().getData();
 						if(d.isTopHalf()) d = (Door) c.getRelative(0, -1, 0).getState().getData();
@@ -71,31 +84,32 @@ public class ContainerListener implements Listener{
 							continue;
 						}
 					}
-
-					this.sendError(p, b, c);
-					e.setCancelled(true);
-					return;
-				}  
-				if(c == seen.get(seen.size() - 1)){
-					this.sendError(p, b, c);
-					e.setCancelled(true);
-					return;
-				}
-				
-				if(plugin.isLenient()){
-					for(int x = -1; x <= 1; x++){
-						for(int y = -1; y <= 1; y++){
-							for(int z = -1; z <= 1; z++){
-								if(c.getRelative(x, y, z).equals(b)){
-									return;
-								}
-							}
-						}
-					}
+					//Invalid block
+					//Breaking destroys the loop.
+					break;
 				}
 			}
+			if(plugin.isLenient()){
+				if(nearly.contains(b)){
+					return;
+				}
+			}
+			/* They:
+			 * - May be using a chest from too far away
+			 * - May be looking at a solid block or closed door
+			 * - May be looking into the air and freecamming somewhere
+			 * If lenient, they're far off. If not lenient, they could be closer.
+			 */
+			this.sendError(p, b, c);
+			e.setCancelled(true);
+			return;
 		}
 	}
+	/**
+	 * Gets the chest (or null) directly next to a block. Does not check vertical or diagonal.
+	 * @param b The block to check next to.
+	 * @return The chest.
+	 */
 	private Block getChestNextTo(Block b){
 		Block[] c = new Block[4];
 		c[0] = (b.getLocation().add(1, 0, 0).getBlock());
@@ -110,6 +124,12 @@ public class ContainerListener implements Listener{
 		}
 		return null;
 	}
+	/**
+	 * Sends an error message to a player stating they freecammed.
+	 * @param p The player who caused the event
+	 * @param b The block they tried to use
+	 * @param c The block they were looking at
+	 */
 	private void sendError(Player p, Block b, Block c){
 		if(plugin.getConfig().isBoolean("message")){
 			p.sendMessage(ChatColor.RED + "[ChestFix] " + ChatColor.YELLOW + "You used a "+b.getType().toString()+" but were looking at " + c.getType().toString() + ".");
