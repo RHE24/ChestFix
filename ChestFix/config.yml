@@ -1,0 +1,15 @@
+#Log to hawkeye or not.  Will not try if hawkeye is disabled.
+hawkeye: true 
+#Send players an error msg when they try to see the block
+message: true
+#Complicated.  Instead of searching a 1x1 beam, it searches a 3x3 beam of blocks for the target block.  True will mean less strict 
+lenient: true
+#Blocks that can be interacted through. E.g, signs, levers, grass, piston heads.  Many of these are pre-added
+transparent:
+    - 117 #Brewing stand
+    - 64 #Wooden door
+    - 44 #Slabs
+#Blocks to protect interaction with. E.g., Levers, Chests, crafting tables.  Many of thes are pre-added.
+interact:
+    - 116 #Enchanting table
+    - 69 #Lever
