@@ -42,17 +42,19 @@ public class ChestFix extends JavaPlugin {
 		this.configFile = new File(this.getDataFolder(), "config.yml");
 		log.info("Loading Config");
 		
-		if(this.configFile == null){
+		if(this.configFile == null || !this.configFile.exists()){
 			/* First run */
 			log.info("Creating config");
+			this.saveDefaultConfig();
 			this.getConfig().options().copyDefaults(true);
-			this.saveConfig();
+			//this.saveConfig();
+			
 		}
 		
 		this.config = YamlConfiguration.loadConfiguration(this.configFile);
 		this.lenient = config.getBoolean("lenient");
 		
-		if(config.getBoolean("hawkeye")){
+		if(config.getBoolean("log.hawkeye")){
 			this.hawkEye = (HawkEye) Bukkit.getPluginManager().getPlugin("HawkEye");
 		}
 		/* Begin loading blocks */

@@ -2,6 +2,7 @@ package com.gmail.igotburnt.ChestFix;
 
 import java.util.HashSet;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -136,6 +137,16 @@ public class ContainerListener implements Listener{
 		}
 		if(plugin.getHawkEye() != null){
 			HawkEyeAPI.addCustomEntry(plugin, "Freecammed through " + c.getType().toString()+". ", p, b.getLocation(), b.getType().toString());
+		}
+		if(plugin.getConfig().getBoolean("log.server-log")){
+			plugin.log.info(p.getName() + " freecammed through " + c.getType().toString()+".");
+		}
+		if(plugin.getConfig().getBoolean("notify-mods")){
+			for(Player player : Bukkit.getOnlinePlayers()){
+				if(player != p && player.hasPermission("chestfix.notify")){
+					player.sendMessage(ChatColor.RED + "[ChestFix] " + ChatColor.YELLOW + p.getName() + " used a " + b.getType()+ " they couldn't see.  This might be lag or a hack.");
+				}
+			}
 		}
 	}
 }
