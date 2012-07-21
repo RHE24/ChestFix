@@ -28,6 +28,7 @@ public class ContainerListener implements Listener{
 	@EventHandler(priority = EventPriority.LOW)
 	public void onBlockInteract(PlayerInteractEvent e){
 		if(e.isCancelled() || (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.LEFT_CLICK_BLOCK)) return;
+		if(e.getPlayer().hasPermission("chestfix.bypass")) return;
 		Block b = e.getClickedBlock();
 		
 		//If the block they used was a container E.g. chest, and they left clicked it, it doesn't matter
