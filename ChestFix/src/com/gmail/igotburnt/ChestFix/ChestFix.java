@@ -140,6 +140,21 @@ public class ChestFix extends JavaPlugin {
 		this.addTransparentBlock(Material.SNOW);
 		this.addTransparentBlock(Material.FIRE);
 		this.addTransparentBlock(Material.WEB);
+		this.addTransparentBlock(Material.TRIPWIRE);
+		this.addTransparentBlock(Material.TRIPWIRE_HOOK);
+		
+		/* Stairs */
+		this.addTransparentBlock(Material.COBBLESTONE_STAIRS);
+		this.addTransparentBlock(Material.BRICK_STAIRS);
+		this.addTransparentBlock(Material.SANDSTONE_STAIRS);
+		this.addTransparentBlock(Material.NETHER_BRICK_STAIRS);
+		this.addTransparentBlock(Material.SMOOTH_STAIRS);
+		
+		/* Wood Stairs */
+		this.addTransparentBlock(Material.BIRCH_WOOD_STAIRS);
+		this.addTransparentBlock(Material.WOOD_STAIRS);
+		this.addTransparentBlock(Material.JUNGLE_WOOD_STAIRS);
+		this.addTransparentBlock(Material.SPRUCE_WOOD_STAIRS);
 		
 		/* Lava & Water */
 		this.addTransparentBlock(Material.LAVA);
