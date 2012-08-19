@@ -75,7 +75,7 @@ public class ContainerListener implements Listener{
 				}
 				else{
 					//Double chests
-					if(b.getState() instanceof Chest && getChestNextTo(b) == c){		
+					if(b.getType() == Material.CHEST && getChestNextTo(b) == c){		
 						return;
 					}
 					//Open doors
