@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -133,7 +132,7 @@ public class ContainerListener implements Listener{
 	 * @param c The block they were looking at
 	 */
 	private void sendError(Player p, Block b, Block c){
-		if(plugin.getConfig().isBoolean("message")){
+		if(plugin.getConfig().getBoolean("message")){
 			p.sendMessage(ChatColor.RED + "[ChestFix] " + ChatColor.YELLOW + "You used a "+b.getType().toString()+" but were looking at " + c.getType().toString() + ".");
 		}
 		if(plugin.getHawkEye() != null){
