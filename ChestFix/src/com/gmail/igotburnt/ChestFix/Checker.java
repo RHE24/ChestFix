@@ -122,6 +122,7 @@ public class Checker{
 	 * @param loc The location a players head is
 	 * @param lookat The location they should be looking
 	 * @return The location the player should be facing to have their crosshairs on the location lookAt
+	 * Kudos to bergerkiller for most of this function
 	 */
 	public Location lookAt(Location loc, Location lookat) {
         //Clone the loc to prevent applied changes to the input loc
