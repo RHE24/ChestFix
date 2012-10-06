@@ -34,6 +34,7 @@ public class ContainerListener implements Listener{
 		if(plugin.getInteractBlocks().contains(b.getType())){
 			if(!checker.canSee(e.getPlayer(), e.getClickedBlock())){
 				sendError(e.getPlayer());
+				e.setCancelled(true);
 			}
 		}
 	}
