@@ -115,6 +115,7 @@ public class ChestFix extends JavaPlugin {
 		this.addTransparentBlock(Material.DETECTOR_RAIL);
 		this.addTransparentBlock(Material.LEVER);
 		this.addTransparentBlock(Material.STONE_BUTTON);
+		this.addTransparentBlock(Material.WOOD_BUTTON);
 		this.addTransparentBlock(Material.STONE_PLATE);
 		this.addTransparentBlock(Material.WOOD_PLATE);
 		
@@ -124,6 +125,8 @@ public class ChestFix extends JavaPlugin {
 		
 		this.addTransparentBlock(Material.RED_ROSE);
 		this.addTransparentBlock(Material.YELLOW_FLOWER);
+		
+		this.addTransparentBlock(Material.FLOWER_POT);
 
 		/* Greens */
 		this.addTransparentBlock(Material.LONG_GRASS);
